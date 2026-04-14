@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Etapa 4 — Processo Comercial e Ferramentas · SDRBoost</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0F0F13;--bg2:#16161C;--bg3:#1C1C24;--bg4:#222230;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --yellow:#F5C842;--yd:rgba(245,200,66,0.12);--yb:rgba(245,200,66,0.3);
+  --white:#fff;--off:rgba(255,255,255,0.72);--muted:rgba(255,255,255,0.35);
+  --green:#1D9E75;--gbg:rgba(29,158,117,0.12);
+  --red:#E84D4D;--rbg:rgba(232,77,77,0.12);
+  --blue-bg:rgba(99,120,255,0.1);--blue-b:rgba(99,120,255,0.28);--blue-t:#8899ff;
+  --teal-bg:rgba(29,158,117,0.1);--teal-b:rgba(29,158,117,0.28);
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--white);line-height:1.7;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* ── PAINEL GESTOR ── */
+#manager-panel{background:var(--bg2);border-bottom:2px solid var(--yellow);z-index:60;position:relative}
+.mp-header{display:flex;align-items:center;padding:.875rem 1.5rem;cursor:pointer;user-select:none;gap:12px}
+.mp-logo{font-family:'Syne',sans-serif;font-weight:800;font-size:15px;color:var(--white);display:flex;align-items:center;gap:6px}
+.mp-logo span{color:var(--yellow)}
+.mp-badge{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;background:var(--yellow);color:#09090F;padding:3px 10px;border-radius:20px}
+.mp-toggle{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;margin-left:auto}
+.mp-body{padding:1.25rem 1.5rem;border-top:1px solid var(--border);display:none}
+.mp-body.open{display:block}
+.mp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.mp-grid{grid-template-columns:1fr}}
+.mp-field{display:flex;flex-direction:column;gap:4px}
+.mp-label{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.mp-input{background:var(--bg3);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--white);outline:none;transition:border-color .2s;width:100%}
+.mp-input:focus{border-color:var(--yellow)}
+.mp-input::placeholder{color:var(--muted);font-style:italic}
+textarea.mp-input{resize:vertical;min-height:68px;line-height:1.6}
+.mp-actions{display:flex;align-items:center;gap:10px;margin-top:1rem;flex-wrap:wrap}
+.mp-save{background:var(--yellow);color:#09090F;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:9px 20px;border-radius:8px;border:none;cursor:pointer;transition:opacity .2s}
+.mp-save:hover{opacity:.88}
+.mp-saved{font-size:11px;color:var(--green);opacity:0;transition:opacity .3s}
+.mp-saved.show{opacity:1}
+.mp-hint{font-size:11px;color:var(--muted);margin-top:.75rem;line-height:1.6}
+
+/* ── BARS ── */
+#company-bar{background:var(--bg3);border-bottom:1px solid var(--border);padding:.625rem 1.5rem;display:none;align-items:center;gap:10px;flex-wrap:wrap}
+#company-bar.visible{display:flex}
+.cb-name{font-family:'Syne',sans-serif;font-weight:700;font-size:14px}
+.cb-sep{color:var(--border2)}.cb-info{font-size:12px;color:var(--muted)}
+.pdf-bar{background:var(--bg2);border-bottom:1px solid var(--border);padding:.625rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pdf-hint{font-size:11px;color:var(--muted);line-height:1.5}.pdf-hint strong{color:var(--off)}
+.pdf-btn{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--border2);color:var(--off);font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:7px 14px;border-radius:8px;cursor:pointer;transition:all .2s;white-space:nowrap}
+.pdf-btn:hover{border-color:var(--yellow);color:var(--yellow);background:var(--yd)}
+.pdf-btn svg{width:14px;height:14px;flex-shrink:0}
+
+/* ── SIDEBAR ── */
+.sidebar{position:fixed;top:0;left:0;width:240px;height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;z-index:50;overflow-y:auto;padding-bottom:2rem}
+.sb-logo{padding:1rem 1.25rem .875rem;border-bottom:1px solid var(--border);font-family:'Syne',sans-serif;font-weight:800;font-size:14px;color:var(--white);display:flex;align-items:center;gap:5px}
+.sb-logo span{color:var(--yellow)}
+.sb-sec{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);padding:1rem 1.25rem .35rem}
+.nav-a{display:flex;align-items:center;gap:8px;padding:.45rem 1.25rem;font-size:12px;color:var(--off);cursor:pointer;text-decoration:none;transition:background .15s,color .15s;border-left:2px solid transparent}
+.nav-a:hover{background:rgba(255,255,255,.04);color:var(--white)}
+.nav-a.active{background:var(--yd);color:var(--yellow);border-left-color:var(--yellow);font-weight:500}
+.nav-n{width:18px;height:18px;border-radius:50%;background:var(--bg4);font-size:9px;font-weight:600;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--muted)}
+.nav-a.active .nav-n{background:var(--yellow);color:#09090F}
+.sb-prog{margin:.75rem 1.25rem .35rem}
+.sb-prog-bar{height:3px;background:var(--bg4);border-radius:20px;overflow:hidden}
+.sb-prog-fill{height:100%;background:var(--yellow);border-radius:20px;width:0%;transition:width .4s}
+.sb-prog-lbl{font-size:10px;color:var(--muted);margin-top:4px}
+.sb-bottom{margin-top:auto;padding:1rem 1.25rem;border-top:1px solid var(--border);font-size:10px;color:var(--muted);line-height:1.7}
+@media(max-width:768px){.sidebar{display:none}.main{margin-left:0!important}}
+
+/* ── MAIN ── */
+.main{margin-left:240px;min-height:100vh;padding-bottom:6rem}
+.cover{background:var(--bg2);border-bottom:1px solid var(--border);padding:2.5rem 2.5rem 2rem;position:relative;overflow:hidden}
+.cover::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(245,200,66,.06) 0%,transparent 65%);pointer-events:none}
+.cover-eye{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--yellow);margin-bottom:.75rem;display:flex;align-items:center;gap:8px}
+.cover-eye::before{content:'';width:16px;height:2px;background:var(--yellow)}
+.cover h1{font-family:'Syne',sans-serif;font-size:clamp(22px,4vw,34px);font-weight:800;line-height:1.15;letter-spacing:-.02em;margin-bottom:.875rem}
+.cover h1 span{color:var(--yellow)}
+.cover-desc{font-size:14px;color:var(--off);max-width:520px;line-height:1.75;margin-bottom:1.5rem}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:flex;align-items:center;gap:5px;background:var(--bg3);border:1px solid var(--border2);border-radius:20px;padding:4px 11px;font-size:11px;color:var(--off)}
+.chip .dot{width:5px;height:5px;border-radius:50%;background:var(--yellow);flex-shrink:0}
+
+/* ── CONTENT ── */
+.content{padding:2rem 2.5rem;max-width:780px}
+.block{margin-bottom:2.25rem;opacity:0;transform:translateY(14px);transition:opacity .45s ease,transform .45s ease}
+.block.visible{opacity:1;transform:translateY(0)}
+.sec-label{font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--yellow);margin-bottom:.5rem;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.sec-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:700;line-height:1.25;letter-spacing:-.01em;margin-bottom:.5rem}
+.sec-desc{font-size:13px;color:var(--off);line-height:1.75;margin-bottom:1.1rem}
+.divider{border:none;border-top:1px solid var(--border);margin:1.75rem 0}
+
+/* ── CALLOUT ── */
+.callout{border-radius:10px;padding:.8rem 1.1rem;display:flex;gap:9px;align-items:flex-start;margin-bottom:1.1rem}
+.callout .ci{font-size:14px;flex-shrink:0;margin-top:2px}
+.callout p{font-size:12px;color:var(--off);line-height:1.65}
+.callout strong,.callout .m{color:var(--yellow);font-weight:600}
+.callout .s{color:var(--blue-t);font-weight:600}
+.callout.yellow{background:var(--yd);border:1px solid var(--yb)}
+.callout.blue{background:var(--blue-bg);border:1px solid var(--blue-b)}
+.callout.teal{background:var(--teal-bg);border:1px solid var(--teal-b)}
+.callout.teal strong{color:#5DCAA5}
+
+/* ── FIELDS ── */
+.field{margin-bottom:.875rem}
+.field-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.who{font-size:9px;padding:2px 7px;border-radius:20px;font-weight:600}
+.who.m{background:var(--yd);color:var(--yellow);border:1px solid var(--yb)}
+.who.s{background:var(--blue-bg);color:var(--blue-t);border:1px solid var(--blue-b)}
+.fi{width:100%;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:.7rem .9rem;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--white);line-height:1.65;resize:vertical;min-height:76px;outline:none;transition:border-color .2s,background .2s}
+.fi:focus{border-color:var(--yellow);background:var(--bg3)}
+.fi::placeholder{color:var(--muted);font-style:italic}
+input.fi{min-height:unset;height:42px;resize:none}
+.fi.prefilled{border-color:rgba(245,200,66,.18);background:rgba(245,200,66,.03)}
+
+/* ── DYNAMIC TABLE ── */
+.dt-wrap{margin-bottom:.875rem}
+.dt{width:100%;border-collapse:collapse}
+.dt th{background:var(--bg3);font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--yellow);padding:9px 11px;border:1px solid var(--border);text-align:left}
+.dt td{border:1px solid var(--border);padding:3px;background:var(--bg2);transition:background .15s}
+.dt td input{width:100%;background:transparent;border:none;outline:none;padding:7px 9px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--off)}
+.dt td input::placeholder{color:var(--muted);font-style:italic}
+.dt tr:hover td{background:var(--bg3)}
+.dt td.dt-act{width:32px;text-align:center}
+.dt-rm{background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:4px 6px;line-height:1;transition:color .2s;font-family:monospace}
+.dt-rm:hover{color:var(--red)}
+.dt-add{display:flex;align-items:center;gap:6px;background:none;border:1px dashed var(--border2);color:var(--muted);font-size:12px;font-family:'DM Sans',sans-serif;padding:6px 12px;border-radius:7px;cursor:pointer;margin-top:6px;transition:all .2s;width:100%;justify-content:center}
+.dt-add:hover{border-color:var(--yellow);color:var(--yellow);background:var(--yd)}
+
+/* ── FUNIL VISUAL ── */
+.funil-wrap{margin-bottom:1.25rem}
+.funil-stage{display:flex;align-items:stretch;margin-bottom:4px;gap:8px}
+.funil-label{width:22px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:10px;color:var(--yellow);flex-shrink:0}
+.funil-body{flex:1;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:.75rem 1rem;transition:border-color .2s}
+.funil-body:focus-within{border-color:var(--yellow)}
+.funil-stage-name{font-size:11px;font-weight:600;color:var(--yellow);letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.funil-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+@media(max-width:500px){.funil-row{grid-template-columns:1fr}}
+.funil-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:6px 9px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--off);outline:none;transition:border-color .2s}
+.funil-input:focus{border-color:var(--yellow)}
+.funil-input::placeholder{color:var(--muted);font-style:italic}
+.funil-connector{width:2px;background:var(--border2);margin:0 auto;height:8px;position:relative}
+.funil-connector::after{content:'▼';position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);font-size:8px;color:var(--muted)}
+
+/* ── FERRAMENTAS ── */
+.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:.875rem}
+@media(max-width:500px){.tools-grid{grid-template-columns:1fr}}
+.tool-card{background:var(--bg2);border:1px solid var(--border2);border-radius:10px;padding:.875rem 1rem}
+.tool-card-header{display:flex;align-items:center;gap:8px;margin-bottom:.5rem}
+.tool-icon{font-size:18px;flex-shrink:0}
+.tool-cat{font-size:10px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}
+.tool-name-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:6px;padding:5px 8px;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--off);outline:none;transition:border-color .2s;margin-bottom:4px}
+.tool-name-input:focus{border-color:var(--yellow)}
+.tool-name-input::placeholder{color:var(--muted);font-style:italic}
+.tool-note-input{width:100%;background:transparent;border:none;outline:none;font-size:11px;font-family:'DM Sans',sans-serif;color:var(--muted);resize:none;line-height:1.5}
+.tool-note-input::placeholder{color:var(--muted);font-style:italic}
+
+/* ── NOME EDITÁVEL DA ETAPA DO FUNIL ── */
+.funil-name-input{
+  width:100%;background:transparent;border:none;border-bottom:1px dashed rgba(245,200,66,0.35);
+  outline:none;font-family:'Syne',sans-serif;font-weight:700;font-size:12px;
+  color:var(--yellow);letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 0 4px;margin-bottom:8px;transition:border-color .2s;
+}
+.funil-name-input:focus{border-bottom-color:var(--yellow)}
+.funil-name-input::placeholder{color:rgba(245,200,66,0.35);font-style:italic;font-weight:400;text-transform:none}
+
+/* botão remover etapa */
+.funil-rm{
+  background:none;border:none;color:var(--muted);font-size:14px;cursor:pointer;
+  padding:2px 5px;line-height:1;transition:color .2s;font-family:monospace;
+  flex-shrink:0;align-self:flex-start;margin-top:2px;
+}
+.funil-rm:hover{color:var(--red)}
+
+/* botão adicionar etapa */
+.funil-add{
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  width:100%;background:none;border:1px dashed var(--border2);color:var(--muted);
+  font-size:12px;font-family:'DM Sans',sans-serif;padding:7px 12px;
+  border-radius:7px;cursor:pointer;margin-top:8px;transition:all .2s;
+}
+.funil-add:hover{border-color:var(--yellow);color:var(--yellow);background:var(--yd)}
+
+/* ── ROTINA DO DIA ── */
+.rotina-timeline{display:flex;flex-direction:column;gap:0;margin-bottom:.875rem}
+.rotina-item{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:stretch}
+.rotina-time-wrap{display:flex;flex-direction:column;align-items:center;gap:0}
+.rotina-time{font-size:10px;font-weight:600;color:var(--yellow);background:var(--bg3);border:1px solid var(--border2);border-radius:6px;padding:4px 6px;text-align:center;white-space:nowrap;width:60px}
+.rotina-line{flex:1;width:1px;background:var(--border2);margin:3px auto}
+.rotina-body{background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:.75rem 1rem;margin-bottom:4px;transition:border-color .2s}
+.rotina-body:focus-within{border-color:var(--yellow)}
+.rotina-body-title{font-size:11px;font-weight:600;color:var(--off);margin-bottom:4px}
+.rotina-body input{width:100%;background:transparent;border:none;outline:none;font-size:12px;font-family:'DM Sans',sans-serif;color:var(--muted);line-height:1.5}
+.rotina-body input::placeholder{color:var(--muted);font-style:italic}
+
+/* ── QUIZ SECTION ── */
+.quiz-section{background:var(--white);border-radius:16px;padding:2rem;margin-left:-2.5rem;margin-right:-2.5rem;margin-bottom:0}
+.quiz-section .sec-label{color:#534AB7}
+.quiz-section .sec-label::after{background:rgba(0,0,0,.1)}
+.quiz-section .sec-title{color:#09090F}
+.quiz-section .sec-desc{color:rgba(0,0,0,.55)}
+@media(max-width:768px){.quiz-section{margin-left:-1.5rem;margin-right:-1.5rem;border-radius:0;padding:1.5rem}}
+.q-block{background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:1.1rem;margin-bottom:.875rem;transition:border-color .2s}
+.q-block.correct{border-color:var(--green)}.q-block.wrong{border-color:var(--red)}
+.q-head{display:flex;align-items:flex-start;gap:9px;margin-bottom:.75rem}
+.q-num{width:24px;height:24px;border-radius:6px;background:var(--yellow);color:#09090F;font-family:'Syne',sans-serif;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.q-text{font-size:13px;font-weight:500;line-height:1.55;color:var(--white)}
+.q-type{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:.6rem}
+.q-opts{display:flex;flex-direction:column;gap:5px}
+.q-opt{display:flex;align-items:center;gap:8px;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:.55rem .8rem;cursor:pointer;transition:border-color .2s,background .2s;font-size:12px;color:var(--off);user-select:none}
+.q-opt:hover{border-color:var(--border2);background:var(--bg4)}
+.q-opt.sel{border-color:var(--yellow);background:var(--yd);color:var(--white)}
+.q-opt.ok{border-color:var(--green);background:var(--gbg);color:var(--white)}
+.q-opt.err{border-color:var(--red);background:var(--rbg);color:var(--white)}
+.q-opt .oc{width:14px;height:14px;border-radius:50%;border:1.5px solid var(--border2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:8px;transition:all .2s}
+.q-opt.sel .oc{background:var(--yellow);border-color:var(--yellow);color:#09090F}
+.q-opt.ok  .oc{background:var(--green);border-color:var(--green);color:#fff}
+.q-opt.err .oc{background:var(--red);border-color:var(--red);color:#fff}
+.q-fb{display:none;margin-top:.625rem;padding:.55rem .8rem;border-radius:7px;font-size:12px;line-height:1.6}
+.q-fb.show{display:block}
+.q-fb.ok{background:var(--gbg);color:#5DCAA5}.q-fb.err{background:var(--rbg);color:#F09595}
+.quiz-section .q-block{background:#F7F6FF;border-color:rgba(83,74,183,.15)}
+.quiz-section .q-block.correct{border-color:#1D9E75}.quiz-section .q-block.wrong{border-color:#E84D4D}
+.quiz-section .q-num{background:#534AB7;color:#fff}
+.quiz-section .q-text{color:#09090F}
+.quiz-section .q-type{color:rgba(0,0,0,.38)}
+.quiz-section .q-opt{background:#EEEDFE;border-color:rgba(83,74,183,.15);color:rgba(0,0,0,.65)}
+.quiz-section .q-opt:hover{background:#E0DEFF;border-color:rgba(83,74,183,.3)}
+.quiz-section .q-opt .oc{border-color:rgba(83,74,183,.3)}
+.quiz-section .q-opt.sel{background:#534AB7;border-color:#534AB7;color:#fff}
+.quiz-section .q-opt.sel .oc{background:#fff;border-color:#fff;color:#534AB7}
+.quiz-section .q-opt.ok{background:rgba(29,158,117,.12);border-color:#1D9E75;color:#085041}
+.quiz-section .q-opt.ok .oc{background:#1D9E75;border-color:#1D9E75;color:#fff}
+.quiz-section .q-opt.err{background:rgba(232,77,77,.1);border-color:#E84D4D;color:#791F1F}
+.quiz-section .q-opt.err .oc{background:#E84D4D;border-color:#E84D4D;color:#fff}
+.quiz-section .q-fb.ok{background:rgba(29,158,117,.1);color:#085041}
+.quiz-section .q-fb.err{background:rgba(232,77,77,.08);color:#791F1F}
+.quiz-btn{width:100%;background:var(--yellow);color:#09090F;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;padding:12px;border-radius:8px;border:none;cursor:pointer;margin-top:.5rem;transition:opacity .2s,transform .15s}
+.quiz-btn:hover{opacity:.88;transform:translateY(-1px)}
+.quiz-btn:disabled{opacity:.35;cursor:not-allowed;transform:none}
+.quiz-section .quiz-btn{background:#534AB7;color:#fff}
+.quiz-section .quiz-btn:hover{background:#3C3489}
+.quiz-result{display:none;background:var(--bg2);border:1px solid var(--border2);border-radius:12px;padding:1.25rem;text-align:center;margin-top:.875rem}
+.quiz-result.show{display:block}
+.quiz-section .quiz-result{background:#F7F6FF;border-color:rgba(83,74,183,.2)}
+.qr-score{font-family:'Syne',sans-serif;font-size:34px;font-weight:800;color:var(--yellow);line-height:1;margin-bottom:.35rem}
+.quiz-section .qr-score{color:#534AB7}
+.qr-msg{font-size:13px;color:var(--off)}
+.quiz-section .qr-msg{color:rgba(0,0,0,.6)}
+
+/* ── CHECKLIST ── */
+.cl{margin:.875rem 0}
+.cl-item{display:flex;align-items:flex-start;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}
+.cl-item:last-child{border-bottom:none}
+.cl-item input[type=checkbox]{width:15px;height:15px;accent-color:var(--yellow);flex-shrink:0;margin-top:3px;cursor:pointer}
+.cl-item label{font-size:12px;color:var(--off);line-height:1.6;cursor:pointer;transition:color .2s}
+.cl-item input:checked+label{color:var(--muted);text-decoration:line-through}
+.cl-prog{display:flex;align-items:center;gap:9px;margin-top:.625rem}
+.cl-bar{flex:1;height:3px;background:var(--bg4);border-radius:20px;overflow:hidden}
+.cl-fill{height:100%;background:var(--yellow);border-radius:20px;width:0%;transition:width .3s}
+.cl-pct{font-size:10px;font-weight:600;color:var(--yellow);min-width:28px;text-align:right}
+.next-card{background:var(--bg2);border:1px solid var(--yb);border-radius:12px;padding:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.next-card h4{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;margin-bottom:.25rem}
+.next-card p{font-size:12px;color:var(--off)}
+.next-btn{background:var(--yellow);color:#09090F;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:600;padding:9px 18px;border-radius:8px;border:none;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:opacity .2s}
+.next-btn:disabled{opacity:.35;cursor:not-allowed}
+.next-btn:not(:disabled):hover{opacity:.88}
+
+/* ── PRINT ── */
+@media print{
+  @page{margin:15mm 12mm;size:A4}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:#09090F!important;color:#fff!important;font-size:11px}
+  #manager-panel,#company-bar,.pdf-bar,.sidebar,.dt-add,.dt-act,.dt-rm,.quiz-btn,.next-btn,.next-card,.mp-actions{display:none!important}
+  .main{margin-left:0!important}
+  .cover{padding:10mm 10mm 6mm!important}
+  .content{padding:6mm 10mm!important;max-width:100%!important}
+  .block{opacity:1!important;transform:none!important;page-break-inside:avoid;margin-bottom:10px}
+  .fi{background:#16161C!important;border-color:rgba(255,255,255,.15)!important;color:#fff!important;font-size:11px!important;padding:4px 8px!important;min-height:unset!important}
+  input.fi{height:28px!important}
+  .dt td{background:#16161C!important}
+  .dt td input{font-size:11px!important;padding:4px 8px!important;color:rgba(255,255,255,.8)!important}
+  .funil-body,.tool-card,.rotina-body{background:#16161C!important;border-color:rgba(255,255,255,.1)!important}
+  .funil-input,.tool-name-input,.rotina-body input{background:#222!important;color:#fff!important;font-size:11px!important}
+  .quiz-section{background:#F7F6FF!important;margin:0!important;border-radius:10px!important;padding:10px!important}
+  .quiz-section .q-block{background:#EEEDFE!important}
+  .quiz-section .q-opt{background:#E8E6FF!important;color:#09090F!important;padding:4px 8px!important}
+  .quiz-section .q-text{color:#09090F!important}
+  .q-fb.show{display:block!important}
+  .quiz-result.show{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ PAINEL GESTOR ═══ -->
+<div id="manager-panel">
+  <div class="mp-header" onclick="togglePanel()">
+    <div class="mp-logo"><span>⚡</span> SDRBoost</div>
+    <span class="mp-badge">Painel do Gestor</span>
+    <div class="mp-toggle"><span id="mp-lbl">Personalizar material</span><span id="mp-arr">▼</span></div>
+  </div>
+  <div class="mp-body" id="mp-body">
+    <p style="font-size:12px;color:var(--off);margin-bottom:1rem;line-height:1.65">Preencha o processo comercial e as ferramentas antes de entregar ao time.</p>
+    <div class="mp-grid">
+      <div class="mp-field" style="grid-column:1/-1"><label class="mp-label">Nome da empresa</label><input class="mp-input" id="mp-empresa" placeholder="Ex.: Acme Tecnologia"></div>
+      <div class="mp-field" style="grid-column:1/-1"><label class="mp-label">CRM utilizado</label><input class="mp-input" id="mp-crm" placeholder="Ex.: HubSpot, Salesforce, Pipedrive, RD Station…"></div>
+      <div class="mp-field" style="grid-column:1/-1"><label class="mp-label">Ferramenta de prospecção / cadência</label><input class="mp-input" id="mp-cadencia" placeholder="Ex.: Outreach, Salesloft, Ramper, Apollo…"></div>
+      <div class="mp-field" style="grid-column:1/-1"><label class="mp-label">Ferramenta de comunicação interna</label><input class="mp-input" id="mp-comunicacao" placeholder="Ex.: Slack, Teams, WhatsApp corporativo…"></div>
+      <div class="mp-field" style="grid-column:1/-1"><label class="mp-label">Meta de atividades diárias (ex.: X ligações + Y e-mails)</label><input class="mp-input" id="mp-meta-ativ" placeholder="Ex.: 30 tentativas de contato por dia — 20 ligações + 10 e-mails"></div>
+      <div class="mp-field" style="grid-column:1/-1"><label class="mp-label">Meta de reuniões agendadas por semana</label><input class="mp-input" id="mp-meta-reun" placeholder="Ex.: 5 reuniões qualificadas por semana"></div>
+      <div class="mp-field" style="grid-column:1/-1"><label class="mp-label">Critério de passagem de lead para o closer (handoff)</label><textarea class="mp-input" id="mp-handoff" placeholder="Ex.: Lead qualificado com BANT confirmado + reunião agendada com presença do decisor…"></textarea></div>
+      <div class="mp-field" style="grid-column:1/-1"><label class="mp-label">SLA de resposta (quanto tempo para follow-up após contato)</label><input class="mp-input" id="mp-sla" placeholder="Ex.: Follow-up em até 24h após primeira tentativa; 3 tentativas em 5 dias"></div>
+      <div class="mp-field" style="grid-column:1/-1"><label class="mp-label">Reuniões de pipeline (frequência e formato)</label><input class="mp-input" id="mp-pipeline" placeholder="Ex.: Daily de 15min às 9h + pipeline review toda sexta às 16h"></div>
+    </div>
+    <div class="mp-actions">
+      <button class="mp-save" onclick="saveManagerData()">Salvar e aplicar ao material</button>
+      <span class="mp-saved" id="mp-saved">✓ Salvo com sucesso</span>
+    </div>
+    <p class="mp-hint">Os dados ficam salvos neste navegador. Duplique o arquivo para criar versões por cliente.</p>
+  </div>
+</div>
+
+<div id="company-bar">
+  <span class="cb-name" id="cb-name"></span>
+  <span class="cb-sep">·</span>
+  <span class="cb-info" id="cb-crm"></span>
+</div>
+
+<div class="pdf-bar">
+  <span class="pdf-hint"><strong>Dica:</strong> clique em "Baixar PDF" e selecione "Salvar como PDF" na janela de impressão.</span>
+  <button class="pdf-btn" onclick="window.print()">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 11H2a1 1 0 01-1-1V6a1 1 0 011-1h12a1 1 0 011 1v4a1 1 0 01-1 1h-2"/>
+      <rect x="4" y="9" width="8" height="6" rx="1"/><path d="M4 5V2a1 1 0 011-1h6a1 1 0 011 1v3"/>
+      <circle cx="13" cy="7.5" r="0.5" fill="currentColor"/>
+    </svg>
+    Baixar PDF
+  </button>
+</div>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sb-logo"><span>⚡</span> SDRBoost</div>
+  <div class="sb-sec">Etapa 4 de 8</div>
+  <div class="sb-prog">
+    <div class="sb-prog-bar"><div class="sb-prog-fill" id="sb-fill"></div></div>
+    <div class="sb-prog-lbl" id="sb-lbl">0% concluído</div>
+  </div>
+  <a class="nav-a active" href="#sec-intro"><span class="nav-n">1</span>Introdução</a>
+  <a class="nav-a" href="#sec-funil"><span class="nav-n">2</span>Funil comercial</a>
+  <a class="nav-a" href="#sec-ferramentas"><span class="nav-n">3</span>Ferramentas</a>
+  <a class="nav-a" href="#sec-metas"><span class="nav-n">4</span>Metas e SLAs</a>
+  <a class="nav-a" href="#sec-rotina"><span class="nav-n">5</span>Rotina do time</a>
+  <a class="nav-a" href="#sec-handoff"><span class="nav-n">6</span>Handoff para o closer</a>
+  <a class="nav-a" href="#sec-quiz"><span class="nav-n">7</span>Quiz</a>
+  <a class="nav-a" href="#sec-checklist"><span class="nav-n">8</span>Checklist</a>
+  <div class="sb-bottom">Dias 9–10 · Semana 2<br><span style="color:var(--yellow)">⚡ SDRBoost</span> Trilha de Onboarding de Pré-Vendas</div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+
+  <div class="cover" id="sec-intro">
+    <div class="cover-eye">Etapa 4 de 8 · Semana 2 · Dias 9 e 10</div>
+    <h1>Processo Comercial e<br><span>Ferramentas</span></h1>
+    <p class="cover-desc">Entender o funil, as ferramentas e as regras do processo antes de operar evita erros que custam leads. Nesta etapa você aprende como o time funciona de ponta a ponta.</p>
+    <div class="chips">
+      <span class="chip"><span class="dot"></span>2 dias</span>
+      <span class="chip"><span class="dot"></span>Funil + ferramentas + metas</span>
+      <span class="chip"><span class="dot"></span>Rotina do time</span>
+      <span class="chip"><span class="dot"></span>Progresso salvo automaticamente</span>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="block">
+      <div class="callout yellow">
+        <span class="ci">📋</span>
+        <p>Campos <span class="m">[Gestor]</span> foram preenchidos com dados reais da empresa.
+        Campos <span class="s">[Colaborador]</span> são seus — anote e reflita com suas próprias palavras.
+        <strong>Tudo salvo automaticamente.</strong></p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- FUNIL -->
+    <div class="block" id="sec-funil">
+      <div class="sec-label">Parte 1</div>
+      <div class="sec-title">O funil comercial desta empresa</div>
+      <div class="sec-desc">Cada empresa tem um funil com etapas e critérios próprios. Conhecer cada fase, o que precisa acontecer para avançar e quem é responsável em cada ponto evita leads presos e ruídos no processo.</div>
+      <div class="callout blue"><span class="ci">💡</span><p>Ao final desta seção você deve conseguir desenhar o funil de cabeça e explicar o critério de passagem de uma etapa para a próxima.</p></div>
+
+      <div class="field-label" style="margin-bottom:10px">Etapas do funil <span class="who m">Gestor</span></div>
+      <div class="funil-wrap" id="funil-wrap">
+        <div class="funil-stage" id="fs-1">
+          <div class="funil-label">1</div>
+          <div class="funil-body">
+            <input class="funil-name-input" id="f1-nome" value="Prospecção" placeholder="Nome da etapa">
+            <div class="funil-row">
+              <input class="funil-input" id="f1-criterio" placeholder="Critério de entrada (ex.: lead dentro do ICP identificado)">
+              <input class="funil-input" id="f1-acao" placeholder="Ação principal (ex.: primeiro contato via e-mail ou LinkedIn)">
+            </div>
+          </div>
+          <button class="funil-rm" onclick="removeFunilStage(this)" title="Remover etapa">−</button>
+        </div>
+        <div class="funil-connector"></div>
+        <div class="funil-stage" id="fs-2">
+          <div class="funil-label">2</div>
+          <div class="funil-body">
+            <input class="funil-name-input" id="f2-nome" value="Primeiro contato" placeholder="Nome da etapa">
+            <div class="funil-row">
+              <input class="funil-input" id="f2-criterio" placeholder="Critério de entrada (ex.: lead respondeu ou atendeu)">
+              <input class="funil-input" id="f2-acao" placeholder="Ação principal (ex.: qualificação inicial BANT)">
+            </div>
+          </div>
+          <button class="funil-rm" onclick="removeFunilStage(this)" title="Remover etapa">−</button>
+        </div>
+        <div class="funil-connector"></div>
+        <div class="funil-stage" id="fs-3">
+          <div class="funil-label">3</div>
+          <div class="funil-body">
+            <input class="funil-name-input" id="f3-nome" value="Qualificação" placeholder="Nome da etapa">
+            <div class="funil-row">
+              <input class="funil-input" id="f3-criterio" placeholder="Critério de entrada (ex.: dor confirmada + decisor mapeado)">
+              <input class="funil-input" id="f3-acao" placeholder="Ação principal (ex.: reunião de qualificação aprofundada)">
+            </div>
+          </div>
+          <button class="funil-rm" onclick="removeFunilStage(this)" title="Remover etapa">−</button>
+        </div>
+        <div class="funil-connector"></div>
+        <div class="funil-stage" id="fs-4">
+          <div class="funil-label">4</div>
+          <div class="funil-body">
+            <input class="funil-name-input" id="f4-nome" value="Handoff / Reunião" placeholder="Nome da etapa">
+            <div class="funil-row">
+              <input class="funil-input" id="f4-criterio" placeholder="Critério de entrada (ex.: reunião agendada com decisor)">
+              <input class="funil-input" id="f4-acao" placeholder="Ação principal (ex.: passagem estruturada para o closer)">
+            </div>
+          </div>
+          <button class="funil-rm" onclick="removeFunilStage(this)" title="Remover etapa">−</button>
+        </div>
+        <div class="funil-connector"></div>
+        <div class="funil-stage" id="fs-5">
+          <div class="funil-label">5</div>
+          <div class="funil-body">
+            <input class="funil-name-input" id="f5-nome" value="" placeholder="Nome da etapa extra (opcional)">
+            <div class="funil-row">
+              <input class="funil-input" id="f5-criterio" placeholder="Critério de entrada">
+              <input class="funil-input" id="f5-acao" placeholder="Ação principal">
+            </div>
+          </div>
+          <button class="funil-rm" onclick="removeFunilStage(this)" title="Remover etapa">−</button>
+        </div>
+        <button class="funil-add" onclick="addFunilStage()">+ Adicionar etapa ao funil</button>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Qual etapa do funil você considera mais crítica e por quê? <span class="who s">Colaborador</span></div>
+        <textarea class="fi" id="f-funil-sdr" placeholder="Onde você acha que mais leads se perdem? O que poderia ser feito para melhorar?"></textarea>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- FERRAMENTAS -->
+    <div class="block" id="sec-ferramentas">
+      <div class="sec-label">Parte 2</div>
+      <div class="sec-title">Ferramentas do time</div>
+      <div class="sec-desc">Cada ferramenta tem um papel no processo. Saber para que serve e quando usar cada uma evita retrabalho e informação perdida.</div>
+
+      <div class="tools-grid">
+        <div class="tool-card">
+          <div class="tool-card-header"><span class="tool-icon">📊</span><span class="tool-cat">CRM</span></div>
+          <input class="tool-name-input" id="t-crm" placeholder="Ex.: HubSpot">
+          <textarea class="tool-note-input" id="t-crm-note" rows="2" placeholder="Para que usamos: registrar todas as interações, atualizar estágio do lead, criar tarefas de follow-up…"></textarea>
+        </div>
+        <div class="tool-card">
+          <div class="tool-card-header"><span class="tool-icon">📧</span><span class="tool-cat">Cadência / Prospecção</span></div>
+          <input class="tool-name-input" id="t-cadencia" placeholder="Ex.: Outreach">
+          <textarea class="tool-note-input" id="t-cadencia-note" rows="2" placeholder="Para que usamos: automatizar sequências de e-mail, acompanhar taxas de abertura e resposta…"></textarea>
+        </div>
+        <div class="tool-card">
+          <div class="tool-card-header"><span class="tool-icon">💬</span><span class="tool-cat">Comunicação interna</span></div>
+          <input class="tool-name-input" id="t-chat" placeholder="Ex.: Slack">
+          <textarea class="tool-note-input" id="t-chat-note" rows="2" placeholder="Para que usamos: comunicação do time, escalada de dúvidas, compartilhamento de updates…"></textarea>
+        </div>
+        <div class="tool-card">
+          <div class="tool-card-header"><span class="tool-icon">🎥</span><span class="tool-cat">Videoconferência</span></div>
+          <input class="tool-name-input" id="t-video" placeholder="Ex.: Google Meet">
+          <textarea class="tool-note-input" id="t-video-note" rows="2" placeholder="Para que usamos: reuniões de qualificação, dailies, pipeline reviews…"></textarea>
+        </div>
+        <div class="tool-card">
+          <div class="tool-card-header"><span class="tool-icon">🔍</span><span class="tool-cat">Inteligência / Dados</span></div>
+          <input class="tool-name-input" id="t-dados" placeholder="Ex.: Apollo, LinkedIn Sales Navigator">
+          <textarea class="tool-note-input" id="t-dados-note" rows="2" placeholder="Para que usamos: identificar leads dentro do ICP, encontrar contatos e enriquecer dados…"></textarea>
+        </div>
+        <div class="tool-card">
+          <div class="tool-card-header"><span class="tool-icon">⚡</span><span class="tool-cat">Treinamento / Capacitação</span></div>
+          <input class="tool-name-input" id="t-treino" placeholder="Ex.: SDRBoost">
+          <textarea class="tool-note-input" id="t-treino-note" rows="2" placeholder="Para que usamos: trilha de onboarding, missões diárias, simulações de cold call com IA…"></textarea>
+        </div>
+      </div>
+
+      <div class="field-label" style="margin-bottom:8px">Outras ferramentas utilizadas pelo time <span class="who m">Gestor</span></div>
+      <div class="dt-wrap">
+        <table class="dt" id="dt-tools">
+          <thead><tr><th style="width:30%">Ferramenta</th><th>Para que usamos</th><th class="dt-act"></th></tr></thead>
+          <tbody id="tb-tools">
+            <tr><td><input placeholder="Ex.: Notion"></td><td><input placeholder="Ex.: Documentação de processos e playbooks do time"></td><td class="dt-act"><button class="dt-rm" onclick="removeRow(this)">−</button></td></tr>
+            <tr><td><input placeholder=""></td><td><input placeholder=""></td><td class="dt-act"><button class="dt-rm" onclick="removeRow(this)">−</button></td></tr>
+          </tbody>
+        </table>
+        <button class="dt-add" onclick="addRow('tb-tools',['Ferramenta','Para que usamos'])">+ Adicionar ferramenta</button>
+      </div>
+
+      <div class="field" style="margin-top:.875rem">
+        <div class="field-label">Qual ferramenta você nunca usou e precisa aprender primeiro? <span class="who s">Colaborador</span></div>
+        <textarea class="fi" id="f-tools-sdr" style="min-height:62px" placeholder="Seja honesto. Identifique o gap agora para não travar na operação depois…"></textarea>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- METAS E SLAS -->
+    <div class="block" id="sec-metas">
+      <div class="sec-label">Parte 3</div>
+      <div class="sec-title">Metas, SLAs e critérios de qualidade</div>
+      <div class="sec-desc">Saber o que é esperado de você — em volume, velocidade e qualidade — elimina dúvidas e evita surpresas na primeira revisão de pipeline.</div>
+      <div class="callout teal"><span class="ci">🎯</span><p><strong>Regra do processo:</strong> meta de atividade garante consistência. Meta de resultado mede eficiência. Você precisa das duas.</p></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:.875rem">
+        <div class="field">
+          <div class="field-label">Meta de atividades diárias <span class="who m">Gestor</span></div>
+          <input type="text" class="fi prefilled" id="f-meta-ativ" placeholder="Aguardando gestor…">
+        </div>
+        <div class="field">
+          <div class="field-label">Meta de reuniões por semana <span class="who m">Gestor</span></div>
+          <input type="text" class="fi prefilled" id="f-meta-reun" placeholder="Aguardando gestor…">
+        </div>
+        <div class="field">
+          <div class="field-label">SLA de follow-up <span class="who m">Gestor</span></div>
+          <input type="text" class="fi prefilled" id="f-sla" placeholder="Aguardando gestor…">
+        </div>
+        <div class="field">
+          <div class="field-label">Reuniões de pipeline <span class="who m">Gestor</span></div>
+          <input type="text" class="fi prefilled" id="f-pipeline" placeholder="Aguardando gestor…">
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">O que conta como "atividade válida" no CRM <span class="who m">Gestor</span></div>
+        <div class="dt-wrap">
+          <table class="dt" id="dt-atividades">
+            <thead><tr><th style="width:40%">Atividade</th><th>Como registrar no CRM</th><th class="dt-act"></th></tr></thead>
+            <tbody id="tb-atividades">
+              <tr><td><input placeholder="Ex.: Ligação com contato (atendeu)"></td><td><input placeholder="Ex.: Criar tarefa 'Chamada realizada' + nota com resumo"></td><td class="dt-act"><button class="dt-rm" onclick="removeRow(this)">−</button></td></tr>
+              <tr><td><input placeholder="Ex.: E-mail de prospecção enviado"></td><td><input placeholder="Ex.: Registrar como 'E-mail enviado' na linha do tempo do contato"></td><td class="dt-act"><button class="dt-rm" onclick="removeRow(this)">−</button></td></tr>
+              <tr><td><input placeholder="Ex.: Reunião qualificada agendada"></td><td><input placeholder=""></td><td class="dt-act"><button class="dt-rm" onclick="removeRow(this)">−</button></td></tr>
+            </tbody>
+          </table>
+          <button class="dt-add" onclick="addRow('tb-atividades',['Atividade','Como registrar no CRM'])">+ Adicionar atividade</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Qual meta você acha mais desafiadora e por quê? <span class="who s">Colaborador</span></div>
+        <textarea class="fi" id="f-meta-sdr" style="min-height:62px" placeholder="Identifique o desafio agora para conversar com o gestor antes de começar a operar…"></textarea>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ROTINA DO TIME -->
+    <div class="block" id="sec-rotina">
+      <div class="sec-label">Parte 4</div>
+      <div class="sec-title">Rotina semanal do time</div>
+      <div class="sec-desc">Conhecer o ritmo do time antes do primeiro dia evita que você chegue sem saber o que acontece, quando e com quem.</div>
+
+      <div class="field-label" style="margin-bottom:10px">Agenda típica da semana <span class="who m">Gestor</span></div>
+      <div class="rotina-timeline">
+        <div class="rotina-item">
+          <div class="rotina-time-wrap"><div class="rotina-time">Segunda</div><div class="rotina-line"></div></div>
+          <div class="rotina-body">
+            <div class="rotina-body-title">Segunda-feira</div>
+            <input id="r-seg" placeholder="Ex.: Planejamento de cadências, revisão da lista de prospecção e alinhamento com gestor…">
+          </div>
+        </div>
+        <div class="rotina-item">
+          <div class="rotina-time-wrap"><div class="rotina-time">Terça</div><div class="rotina-line"></div></div>
+          <div class="rotina-body">
+            <div class="rotina-body-title">Terça-feira</div>
+            <input id="r-ter" placeholder="Ex.: Bloco de prospecção ativa + follow-ups de cadências em andamento…">
+          </div>
+        </div>
+        <div class="rotina-item">
+          <div class="rotina-time-wrap"><div class="rotina-time">Quarta</div><div class="rotina-line"></div></div>
+          <div class="rotina-body">
+            <div class="rotina-body-title">Quarta-feira</div>
+            <input id="r-qua" placeholder="Ex.: Revisão de pipeline com gestor + ajuste de cadências + reuniões de qualificação…">
+          </div>
+        </div>
+        <div class="rotina-item">
+          <div class="rotina-time-wrap"><div class="rotina-time">Quinta</div><div class="rotina-line"></div></div>
+          <div class="rotina-body">
+            <div class="rotina-body-title">Quinta-feira</div>
+            <input id="r-qui" placeholder="Ex.: Prospecção + follow-ups + handoffs pendentes para o closer…">
+          </div>
+        </div>
+        <div class="rotina-item">
+          <div class="rotina-time-wrap"><div class="rotina-time">Sexta</div><div class="rotina-line"></div></div>
+          <div class="rotina-body">
+            <div class="rotina-body-title">Sexta-feira</div>
+            <input id="r-sex" placeholder="Ex.: Pipeline review + fechamento de registros no CRM + planejamento da próxima semana…">
+          </div>
+        </div>
+        <div class="rotina-item">
+          <div class="rotina-time-wrap"><div class="rotina-time" style="background:rgba(245,200,66,0.18);color:var(--yellow)">Semanal</div><div class="rotina-line"></div></div>
+          <div class="rotina-body">
+            <div class="rotina-body-title">Ritual semanal do time</div>
+            <input id="r-semanal" placeholder="Ex.: Pipeline review toda sexta às 16h + 1:1 com gestor às quintas…">
+          </div>
+        </div>
+        <div class="rotina-item">
+          <div class="rotina-time-wrap"><div class="rotina-time" style="background:rgba(245,200,66,0.25);color:var(--yellow);font-weight:700">Mensal</div><div class="rotina-line"></div></div>
+          <div class="rotina-body">
+            <div class="rotina-body-title">Ciclo mensal</div>
+            <input id="r-mensal" placeholder="Ex.: Reunião de performance + revisão de metas + feedback estruturado + planejamento do mês…">
+          </div>
+        </div>
+      </div>
+
+      <div class="field" style="margin-top:.875rem">
+        <div class="field-label">O que mais te surpreendeu na rotina do time? <span class="who s">Colaborador</span></div>
+        <textarea class="fi" id="f-rotina-sdr" style="min-height:62px" placeholder="Alguma prática que você não esperava? Algo que parece diferente do que você viveu antes?"></textarea>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- HANDOFF -->
+    <div class="block" id="sec-handoff">
+      <div class="sec-label">Parte 5</div>
+      <div class="sec-title">Handoff para o closer</div>
+      <div class="sec-desc">O handoff é o momento em que você passa o lead qualificado para o responsável pelo fechamento. Um handoff mal feito desperdiça todo o trabalho de prospecção e qualificação.</div>
+      <div class="callout teal"><span class="ci">🤝</span><p><strong>Princípio do handoff:</strong> passe o contexto, não apenas o contato. O closer precisa chegar na reunião sabendo a dor, o decisor, o prazo e o que foi prometido.</p></div>
+
+      <div class="field">
+        <div class="field-label">Critério de passagem — o que precisa estar confirmado antes do handoff <span class="who m">Gestor</span></div>
+        <textarea class="fi prefilled" id="f-handoff" placeholder="Aguardando gestor…"></textarea>
+      </div>
+
+      <div class="field-label" style="margin-bottom:8px">O que deve ser registrado no CRM antes do handoff <span class="who m">Gestor</span></div>
+      <div class="dt-wrap">
+        <table class="dt" id="dt-handoff">
+          <thead><tr><th style="width:40%">Campo / informação</th><th>Por que é obrigatório</th><th class="dt-act"></th></tr></thead>
+          <tbody id="tb-handoff">
+            <tr><td><input placeholder="Ex.: Nome e cargo do decisor confirmado"></td><td><input placeholder="Ex.: O closer precisa saber com quem vai falar"></td><td class="dt-act"><button class="dt-rm" onclick="removeRow(this)">−</button></td></tr>
+            <tr><td><input placeholder="Ex.: Dor principal identificada"></td><td><input placeholder="Ex.: Personalizar a demo para o problema real"></td><td class="dt-act"><button class="dt-rm" onclick="removeRow(this)">−</button></td></tr>
+            <tr><td><input placeholder="Ex.: Prazo e urgência do prospect"></td><td><input placeholder="Ex.: Priorizar follow-up conforme urgência declarada"></td><td class="dt-act"><button class="dt-rm" onclick="removeRow(this)">−</button></td></tr>
+            <tr><td><input placeholder="Ex.: O que foi prometido na abordagem"></td><td><input placeholder=""></td><td class="dt-act"><button class="dt-rm" onclick="removeRow(this)">−</button></td></tr>
+          </tbody>
+        </table>
+        <button class="dt-add" onclick="addRow('tb-handoff',['Campo / informação','Por que é obrigatório'])">+ Adicionar campo</button>
+      </div>
+
+      <div class="field" style="margin-top:.875rem">
+        <div class="field-label">Se você fosse o closer recebendo um lead, o que mais gostaria de saber antes da reunião? <span class="who s">Colaborador</span></div>
+        <textarea class="fi" id="f-handoff-sdr" placeholder="Pense do ponto de vista de quem vai fechar. Quais informações fariam a diferença?"></textarea>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- QUIZ -->
+    <div class="block quiz-section" id="sec-quiz">
+      <div class="sec-label">Quiz de fixação</div>
+      <div class="sec-title">Valide o que você aprendeu</div>
+      <div class="sec-desc">Responda sem consultar o material. Feedback imediato em cada questão.</div>
+
+      <div class="q-block" data-answer="c">
+        <div class="q-head"><div class="q-num">1</div><div class="q-text">Por que é importante conhecer o funil comercial antes de começar a prospectar?</div></div>
+        <div class="q-type">Múltipla escolha</div>
+        <div class="q-opts">
+          <div class="q-opt" data-v="a"><div class="oc"></div>Para saber quantas ligações serão necessárias no mês</div>
+          <div class="q-opt" data-v="b"><div class="oc"></div>Para impressionar o gestor com conhecimento do processo</div>
+          <div class="q-opt" data-v="c"><div class="oc"></div>Para saber o que precisa acontecer em cada etapa e evitar leads presos ou perdidos</div>
+          <div class="q-opt" data-v="d"><div class="oc"></div>Para calcular a comissão esperada ao final do mês</div>
+        </div>
+        <div class="q-fb ok">✓ Correto! Sem entender o funil, o profissional empurra leads para frente sem os critérios certos — e desperdiça oportunidades.</div>
+        <div class="q-fb err">✗ A resposta é C. Funil existe para estruturar o processo — cada etapa tem um critério de entrada e saída que precisa ser respeitado.</div>
+      </div>
+
+      <div class="q-block" data-answer="verdadeiro">
+        <div class="q-head"><div class="q-num">2</div><div class="q-text">Registrar todas as interações no CRM é responsabilidade do profissional de pré-vendas, não apenas do gestor ou do closer.</div></div>
+        <div class="q-type">Verdadeiro ou Falso</div>
+        <div class="q-opts">
+          <div class="q-opt" data-v="verdadeiro"><div class="oc"></div>Verdadeiro</div>
+          <div class="q-opt" data-v="falso"><div class="oc"></div>Falso</div>
+        </div>
+        <div class="q-fb ok">✓ Correto! CRM desatualizado é pipeline invisível — o gestor não consegue ajudar quem não registra.</div>
+        <div class="q-fb err">✗ Verdadeiro. O CRM é a memória do processo. Quem não registra, não existe no pipeline.</div>
+      </div>
+
+      <div class="q-block" data-answer="b">
+        <div class="q-head"><div class="q-num">3</div><div class="q-text">Qual é o principal risco de fazer um handoff sem registrar o contexto completo no CRM?</div></div>
+        <div class="q-type">Múltipla escolha</div>
+        <div class="q-opts">
+          <div class="q-opt" data-v="a"><div class="oc"></div>O sistema pode travar por excesso de dados não preenchidos</div>
+          <div class="q-opt" data-v="b"><div class="oc"></div>O closer chega na reunião sem contexto e desperdiça a oportunidade qualificada</div>
+          <div class="q-opt" data-v="c"><div class="oc"></div>O lead pode cancelar a reunião por falta de confirmação</div>
+          <div class="q-opt" data-v="d"><div class="oc"></div>O CRM pode registrar o lead como inativo automaticamente</div>
+        </div>
+        <div class="q-fb ok">✓ Exato! Handoff sem contexto é como passar um paciente para um médico sem prontuário — o atendimento começa do zero.</div>
+        <div class="q-fb err">✗ A resposta é B. Sem contexto, o closer repete perguntas já feitas e perde a credibilidade construída na prospecção.</div>
+      </div>
+
+      <div class="q-block" data-answer="falso">
+        <div class="q-head"><div class="q-num">4</div><div class="q-text">A meta de reuniões agendadas é o único indicador que importa para avaliar o desempenho de um pré-vendedor.</div></div>
+        <div class="q-type">Verdadeiro ou Falso</div>
+        <div class="q-opts">
+          <div class="q-opt" data-v="verdadeiro"><div class="oc"></div>Verdadeiro</div>
+          <div class="q-opt" data-v="falso"><div class="oc"></div>Falso</div>
+        </div>
+        <div class="q-fb ok">✓ Correto! Atividades, qualidade do handoff e taxa de conversão de reuniões são igualmente importantes.</div>
+        <div class="q-fb err">✗ Falso. Reuniões sem qualidade não geram receita. Volume de atividades, qualidade do handoff e taxa de conversão também são métricas essenciais.</div>
+      </div>
+
+      <div class="q-block" data-answer="a">
+        <div class="q-head"><div class="q-num">5</div><div class="q-text">O SLA de follow-up define o tempo máximo para retomar contato após uma interação. Por que isso importa?</div></div>
+        <div class="q-type">Múltipla escolha</div>
+        <div class="q-opts">
+          <div class="q-opt" data-v="a"><div class="oc"></div>Porque leads esfriam rapidamente — contato rápido aumenta a taxa de resposta</div>
+          <div class="q-opt" data-v="b"><div class="oc"></div>Porque o CRM bloqueia o lead após o prazo expirar</div>
+          <div class="q-opt" data-v="c"><div class="oc"></div>Porque o gestor recebe alertas automáticos de SLA vencido</div>
+          <div class="q-opt" data-v="d"><div class="oc"></div>Porque o prospect espera uma resposta no prazo contratual</div>
+        </div>
+        <div class="q-fb ok">✓ Exato! Pesquisas mostram que responder em menos de 1h aumenta em até 7x a chance de conectar com o lead.</div>
+        <div class="q-fb err">✗ A resposta é A. Timing é parte da estratégia — follow-up rápido é vantagem competitiva real.</div>
+      </div>
+
+      <div class="q-block" data-answer="c">
+        <div class="q-head"><div class="q-num">6</div><div class="q-text">Qual é a diferença entre meta de atividade e meta de resultado em pré-vendas?</div></div>
+        <div class="q-type">Múltipla escolha</div>
+        <div class="q-opts">
+          <div class="q-opt" data-v="a"><div class="oc"></div>Meta de atividade é definida pelo profissional; meta de resultado é definida pelo gestor</div>
+          <div class="q-opt" data-v="b"><div class="oc"></div>São sinônimos — ambas medem o mesmo indicador de formas diferentes</div>
+          <div class="q-opt" data-v="c"><div class="oc"></div>Meta de atividade mede volume e consistência; meta de resultado mede eficiência e impacto</div>
+          <div class="q-opt" data-v="d"><div class="oc"></div>Meta de atividade é semanal; meta de resultado é mensal</div>
+        </div>
+        <div class="q-fb ok">✓ Correto! Atividade garante que você está no jogo. Resultado mede se você está jogando bem.</div>
+        <div class="q-fb err">✗ A resposta é C. Você precisa das duas: volume garante consistência, eficiência garante qualidade.</div>
+      </div>
+
+      <div class="q-block" data-answer="verdadeiro">
+        <div class="q-head"><div class="q-num">7</div><div class="q-text">Conhecer a rotina do time — reuniões, dailies e rituais — antes de começar a operar reduz atritos e acelera a integração.</div></div>
+        <div class="q-type">Verdadeiro ou Falso</div>
+        <div class="q-opts">
+          <div class="q-opt" data-v="verdadeiro"><div class="oc"></div>Verdadeiro</div>
+          <div class="q-opt" data-v="falso"><div class="oc"></div>Falso</div>
+        </div>
+        <div class="q-fb ok">✓ Isso mesmo! Profissional que conhece o ritmo do time entra em sintonia mais rápido e gera resultado antes.</div>
+        <div class="q-fb err">✗ Verdadeiro. Integração começa antes da primeira ligação — começa no entendimento de como o time opera.</div>
+      </div>
+
+      <button class="quiz-btn" id="quiz-btn" onclick="submitQuiz()">Ver resultado final →</button>
+      <div class="quiz-result" id="quiz-result">
+        <div class="qr-score" id="qr-score">0/7</div>
+        <div class="qr-msg" id="qr-msg"></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- CHECKLIST -->
+    <div class="block" id="sec-checklist">
+      <div class="sec-label">Checklist de conclusão</div>
+      <div class="sec-title">Antes de avançar para a Etapa 5</div>
+      <div class="sec-desc">Confirme cada item. O botão só libera quando tudo estiver marcado.</div>
+      <div class="cl" id="main-cl">
+        <div class="cl-item"><input type="checkbox" id="ck1" onchange="updateCL()"><label for="ck1">Consigo descrever o funil da empresa e o critério de passagem entre as etapas</label></div>
+        <div class="cl-item"><input type="checkbox" id="ck2" onchange="updateCL()"><label for="ck2">Sei para que serve cada ferramenta e quando usar cada uma</label></div>
+        <div class="cl-item"><input type="checkbox" id="ck3" onchange="updateCL()"><label for="ck3">Conheço minha meta de atividades diárias e de reuniões semanais</label></div>
+        <div class="cl-item"><input type="checkbox" id="ck4" onchange="updateCL()"><label for="ck4">Entendo o SLA de follow-up e como registrar atividades no CRM</label></div>
+        <div class="cl-item"><input type="checkbox" id="ck5" onchange="updateCL()"><label for="ck5">Conheço a rotina semanal do time — dailies, pipeline reviews e rituais</label></div>
+        <div class="cl-item"><input type="checkbox" id="ck6" onchange="updateCL()"><label for="ck6">Sei o que precisa estar no CRM antes de fazer o handoff para o closer</label></div>
+        <div class="cl-item"><input type="checkbox" id="ck7" onchange="updateCL()"><label for="ck7">Completei o quiz e revisei os erros com o gestor</label></div>
+      </div>
+      <div class="cl-prog">
+        <div class="cl-bar"><div class="cl-fill" id="cl-fill"></div></div>
+        <div class="cl-pct" id="cl-pct">0%</div>
+      </div>
+      <div style="margin-top:1.5rem">
+        <div class="next-card">
+          <div>
+            <h4>⚡ Próxima etapa: Prospecção e Cadência Ativa</h4>
+            <p>Dias 11–13 · Semana 3 · Da lista ao primeiro contato real.</p>
+          </div>
+          <button class="next-btn" id="next-btn" disabled>Avançar para Etapa 5 →</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script>
+const KEY='sdrboost_etapa4_v1';
+function gs(){try{return JSON.parse(localStorage.getItem(KEY))||{};}catch(e){return{}}}
+function ss(p){const s=gs();Object.assign(s,p);localStorage.setItem(KEY,JSON.stringify(s))}
+
+// ── FUNIL DINÂMICO ────────────────────────────────────────
+let funilCount = 5;
+
+function addFunilStage() {
+  funilCount++;
+  const wrap = document.getElementById('funil-wrap');
+  const addBtn = wrap.querySelector('.funil-add');
+
+  // connector
+  const conn = document.createElement('div');
+  conn.className = 'funil-connector';
+
+  // stage
+  const stage = document.createElement('div');
+  stage.className = 'funil-stage';
+  stage.id = 'fs-' + funilCount;
+  stage.innerHTML = `
+    <div class="funil-label">${funilCount}</div>
+    <div class="funil-body">
+      <input class="funil-name-input" placeholder="Nome da etapa">
+      <div class="funil-row">
+        <input class="funil-input" placeholder="Critério de entrada">
+        <input class="funil-input" placeholder="Ação principal">
+      </div>
+    </div>
+    <button class="funil-rm" onclick="removeFunilStage(this)" title="Remover etapa">−</button>`;
+
+  stage.querySelectorAll('input').forEach(inp => inp.addEventListener('input', autosave));
+  wrap.insertBefore(conn, addBtn);
+  wrap.insertBefore(stage, addBtn);
+  renumberFunil();
+  autosave();
+}
+
+function removeFunilStage(btn) {
+  const wrap = document.getElementById('funil-wrap');
+  const stages = wrap.querySelectorAll('.funil-stage');
+  if (stages.length <= 2) { alert('Mantenha pelo menos 2 etapas no funil.'); return; }
+  const stage = btn.closest('.funil-stage');
+  // remove connector anterior se existir
+  const prev = stage.previousElementSibling;
+  if (prev && prev.classList.contains('funil-connector')) prev.remove();
+  stage.remove();
+  renumberFunil();
+  autosave();
+}
+
+function renumberFunil() {
+  const stages = document.querySelectorAll('#funil-wrap .funil-stage');
+  stages.forEach((s, i) => {
+    const lbl = s.querySelector('.funil-label');
+    if (lbl) lbl.textContent = i + 1;
+  });
+}
+
+function serializeFunil() {
+  const stages = [];
+  document.querySelectorAll('#funil-wrap .funil-stage').forEach(s => {
+    const inputs = s.querySelectorAll('input');
+    stages.push({
+      nome:     inputs[0]?.value || '',
+      criterio: inputs[1]?.value || '',
+      acao:     inputs[2]?.value || ''
+    });
+  });
+  return stages;
+}
+
+function deserializeFunil(stages) {
+  const wrap = document.getElementById('funil-wrap');
+  const addBtn = wrap.querySelector('.funil-add');
+  // limpa tudo exceto o botão add
+  [...wrap.children].forEach(el => {
+    if (!el.classList.contains('funil-add')) el.remove();
+  });
+  funilCount = 0;
+  stages.forEach((st, i) => {
+    funilCount++;
+    if (i > 0) {
+      const conn = document.createElement('div');
+      conn.className = 'funil-connector';
+      wrap.insertBefore(conn, addBtn);
+    }
+    const stage = document.createElement('div');
+    stage.className = 'funil-stage';
+    stage.id = 'fs-' + funilCount;
+    stage.innerHTML = `
+      <div class="funil-label">${funilCount}</div>
+      <div class="funil-body">
+        <input class="funil-name-input" placeholder="Nome da etapa" value="${st.nome||''}">
+        <div class="funil-row">
+          <input class="funil-input" placeholder="Critério de entrada" value="${st.criterio||''}">
+          <input class="funil-input" placeholder="Ação principal" value="${st.acao||''}">
+        </div>
+      </div>
+      <button class="funil-rm" onclick="removeFunilStage(this)" title="Remover etapa">−</button>`;
+    stage.querySelectorAll('input').forEach(inp => inp.addEventListener('input', autosave));
+    wrap.insertBefore(stage, addBtn);
+  });
+}
+
+// ── TABELAS DINÂMICAS ─────────────────────────────────────
+function addRow(tbodyId,phs){
+  const tb=document.getElementById(tbodyId);
+  const tr=document.createElement('tr');
+  phs.forEach(ph=>{const td=document.createElement('td');const inp=document.createElement('input');
+    inp.placeholder=ph;inp.addEventListener('input',autosave);td.appendChild(inp);tr.appendChild(td);});
+  const tdA=document.createElement('td');tdA.className='dt-act';
+  const btn=document.createElement('button');btn.className='dt-rm';btn.textContent='−';
+  btn.onclick=()=>removeRow(btn);tdA.appendChild(btn);tr.appendChild(tdA);tb.appendChild(tr);autosave();
+}
+function removeRow(btn){
+  const tr=btn.closest('tr'),tb=tr.parentElement;
+  if(tb.rows.length>1){tr.remove();autosave();}else alert('Mantenha pelo menos uma linha.');
+}
+function serializeTable(id){
+  const rows=[];
+  document.querySelectorAll('#'+id+' tr').forEach(tr=>{const c=[];tr.querySelectorAll('input').forEach(i=>c.push(i.value));rows.push(c);});
+  return rows;
+}
+function deserializeTable(id,phs,rows){
+  const tb=document.getElementById(id);tb.innerHTML='';
+  rows.forEach(cells=>{
+    const tr=document.createElement('tr');
+    cells.forEach((v,ci)=>{const td=document.createElement('td');const inp=document.createElement('input');
+      inp.placeholder=phs[ci]||'';inp.value=v;inp.addEventListener('input',autosave);td.appendChild(inp);tr.appendChild(td);});
+    const tdA=document.createElement('td');tdA.className='dt-act';
+    const btn=document.createElement('button');btn.className='dt-rm';btn.textContent='−';
+    btn.onclick=()=>removeRow(btn);tdA.appendChild(btn);tr.appendChild(tdA);tb.appendChild(tr);});
+}
+
+// ── CAMPOS SIMPLES ────────────────────────────────────────
+const SF=['f-funil-sdr',
+  't-crm','t-crm-note','t-cadencia','t-cadencia-note','t-chat','t-chat-note',
+  't-video','t-video-note','t-dados','t-dados-note','t-treino','t-treino-note',
+  'f-tools-sdr','f-meta-ativ','f-meta-reun','f-sla','f-pipeline','f-meta-sdr',
+  'r-seg','r-ter','r-qua','r-qui','r-sex','r-semanal','r-mensal','f-rotina-sdr',
+  'f-handoff','f-handoff-sdr'];
+const CK=['ck1','ck2','ck3','ck4','ck5','ck6','ck7'];
+
+function autosave(){
+  const fields={};
+  SF.forEach(id=>{const el=document.getElementById(id);if(el)fields[id]=el.value;});
+  CK.forEach(id=>{const el=document.getElementById(id);if(el)fields[id]=el.checked;});
+  const tables={
+    tools:serializeTable('tb-tools'),
+    atividades:serializeTable('tb-atividades'),
+    handoff:serializeTable('tb-handoff'),
+    funil:serializeFunil()
+  };
+  ss({fields,tables});
+}
+
+function loadSaved(){
+  const s=gs();
+  if(s.fields){
+    SF.forEach(id=>{const el=document.getElementById(id);if(el&&s.fields[id]!==undefined)el.value=s.fields[id];});
+    CK.forEach(id=>{const el=document.getElementById(id);if(el&&s.fields[id]!==undefined)el.checked=s.fields[id];});
+  }
+  if(s.tables){
+    if(s.tables.funil && s.tables.funil.length) deserializeFunil(s.tables.funil);
+    if(s.tables.tools)deserializeTable('tb-tools',['Ferramenta','Para que usamos'],s.tables.tools);
+    if(s.tables.atividades)deserializeTable('tb-atividades',['Atividade','Como registrar no CRM'],s.tables.atividades);
+    if(s.tables.handoff)deserializeTable('tb-handoff',['Campo / informação','Por que é obrigatório'],s.tables.handoff);
+  }
+  if(s.manager)loadManagerIntoPanel(s.manager);
+  if(s.quiz)restoreQuiz(s.quiz.answered,s.quiz.done);
+  updateCL();updateProgress();
+}
+
+// ── PAINEL GESTOR ─────────────────────────────────────────
+const MP=['mp-empresa','mp-crm','mp-cadencia','mp-comunicacao',
+  'mp-meta-ativ','mp-meta-reun','mp-handoff','mp-sla','mp-pipeline'];
+function togglePanel(){
+  const open=document.getElementById('mp-body').classList.toggle('open');
+  document.getElementById('mp-arr').textContent=open?'▲':'▼';
+  document.getElementById('mp-lbl').textContent=open?'Fechar painel':'Personalizar material';
+}
+function saveManagerData(){
+  const data={};
+  MP.forEach(id=>{const el=document.getElementById(id);if(el)data[id]=el.value;});
+  ss({manager:data});applyManagerData(data);
+  const sv=document.getElementById('mp-saved');sv.classList.add('show');
+  setTimeout(()=>sv.classList.remove('show'),2500);
+}
+function loadManagerIntoPanel(data){
+  MP.forEach(id=>{const el=document.getElementById(id);if(el&&data[id]!==undefined)el.value=data[id];});
+  applyManagerData(data);
+}
+function applyManagerData(d){
+  const empresa=d['mp-empresa']||'';
+  if(empresa){document.getElementById('cb-name').textContent=empresa;document.getElementById('company-bar').classList.add('visible');}
+  if(d['mp-crm'])document.getElementById('cb-crm').textContent='CRM: '+d['mp-crm'];
+  const map={
+    'f-meta-ativ':'mp-meta-ativ','f-meta-reun':'mp-meta-reun',
+    'f-sla':'mp-sla','f-pipeline':'mp-pipeline','f-handoff':'mp-handoff',
+    't-crm':'mp-crm','t-cadencia':'mp-cadencia','t-chat':'mp-comunicacao'
+  };
+  Object.entries(map).forEach(([fid,mid])=>{
+    const el=document.getElementById(fid);if(el&&d[mid])el.value=d[mid];
+  });
+  autosave();
+}
+
+// ── QUIZ ──────────────────────────────────────────────────
+let answered={},quizDone=false;
+document.querySelectorAll('.q-opt').forEach(opt=>{
+  opt.addEventListener('click',function(){
+    const block=this.closest('.q-block');
+    if(block.classList.contains('correct')||block.classList.contains('wrong'))return;
+    const correct=this.dataset.v===block.dataset.answer;
+    const idx=[...document.querySelectorAll('.q-block')].indexOf(block);
+    answered[idx]=correct;
+    block.querySelectorAll('.q-opt').forEach(o=>o.classList.remove('sel'));
+    this.classList.add('sel');this.querySelector('.oc').textContent='●';
+    setTimeout(()=>{
+      block.querySelectorAll('.q-opt').forEach(o=>{
+        if(o.dataset.v===block.dataset.answer){o.classList.add('ok');o.querySelector('.oc').textContent='✓';}
+        else if(o.classList.contains('sel')){o.classList.add('err');o.querySelector('.oc').textContent='✗';}
+      });
+      block.classList.add(correct?'correct':'wrong');
+      block.querySelectorAll('.q-fb')[correct?0:1].classList.add('show');
+    },280);
+    ss({quiz:{answered,done:quizDone}});updateProgress();
+  });
+});
+function submitQuiz(){
+  const total=7,score=Object.values(answered).filter(Boolean).length;
+  quizDone=true;ss({quiz:{answered,done:true}});
+  const scoreEl=document.getElementById('qr-score');scoreEl.textContent=score+'/'+total;
+  if(score===total){document.getElementById('qr-msg').textContent='Excelente! Você domina o processo e as ferramentas. Avance para o checklist.';scoreEl.style.color='#1D9E75';}
+  else if(score>=5){document.getElementById('qr-msg').textContent='Bom resultado! Revise os erros com o gestor antes de avançar.';}
+  else{document.getElementById('qr-msg').textContent='Revise as partes onde errou antes de operar.';scoreEl.style.color='#E84D4D';}
+  document.getElementById('quiz-result').classList.add('show');
+  document.getElementById('quiz-btn').disabled=true;updateProgress();
+}
+function restoreQuiz(saved,done){
+  answered=saved||{};quizDone=done||false;
+  document.querySelectorAll('.q-block').forEach((block,idx)=>{
+    if(answered[idx]===undefined)return;
+    block.querySelectorAll('.q-opt').forEach(o=>{if(o.dataset.v===block.dataset.answer){o.classList.add('ok');o.querySelector('.oc').textContent='✓';}});
+    block.classList.add(answered[idx]?'correct':'wrong');
+    block.querySelectorAll('.q-fb')[answered[idx]?0:1].classList.add('show');
+  });
+  if(done){
+    const score=Object.values(answered).filter(Boolean).length;
+    const scoreEl=document.getElementById('qr-score');scoreEl.textContent=score+'/7';
+    if(score===7)scoreEl.style.color='#1D9E75';else if(score<5)scoreEl.style.color='#E84D4D';
+    document.getElementById('qr-msg').textContent=score===7?'Excelente! Você domina o processo.':score>=5?'Bom resultado! Revise os erros.':'Revise o material antes de operar.';
+    document.getElementById('quiz-result').classList.add('show');
+    document.getElementById('quiz-btn').disabled=true;
+  }
+}
+
+// ── CHECKLIST ─────────────────────────────────────────────
+function updateCL(){
+  const boxes=document.querySelectorAll('#main-cl input[type=checkbox]');
+  const checked=[...boxes].filter(b=>b.checked).length;
+  const pct=Math.round((checked/boxes.length)*100);
+  document.getElementById('cl-fill').style.width=pct+'%';
+  document.getElementById('cl-pct').textContent=pct+'%';
+  const btn=document.getElementById('next-btn');btn.disabled=pct<100;
+  if(pct===100)btn.onclick=()=>alert('Parabéns! Etapa 4 concluída.\nAbra o arquivo etapa_05_prospeccao.html para continuar.');
+  autosave();updateProgress();
+}
+function updateProgress(){
+  const checks=document.querySelectorAll('#main-cl input[type=checkbox]');
+  const cn=[...checks].filter(b=>b.checked).length;
+  const qn=Object.keys(answered).length;
+  const pct=Math.round(((cn+qn)/(checks.length+7))*100);
+  document.getElementById('sb-fill').style.width=pct+'%';
+  document.getElementById('sb-lbl').textContent=pct+'% concluído';
+}
+
+// ── SCROLL SPY ────────────────────────────────────────────
+const spyObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){
+    document.querySelectorAll('.nav-a').forEach(n=>{n.classList.remove('active');if(n.getAttribute('href')==='#'+e.target.id)n.classList.add('active');});
+  }});
+},{threshold:0.2});
+document.querySelectorAll('[id^="sec-"]').forEach(s=>spyObs.observe(s));
+
+// ── FADE IN ───────────────────────────────────────────────
+const fadeObs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');fadeObs.unobserve(e.target);}});},{threshold:.07});
+document.querySelectorAll('.block').forEach(el=>fadeObs.observe(el));
+
+// ── AUTOSAVE inputs ───────────────────────────────────────
+SF.forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener('input',autosave);});
+document.querySelectorAll('.dt input,.funil-input,.funil-name-input,.tool-name-input,.tool-note-input,.rotina-body input').forEach(inp=>inp.addEventListener('input',autosave));
+
+// ── INIT ──────────────────────────────────────────────────
+loadSaved();
+</script>
+</body>
+</html>
